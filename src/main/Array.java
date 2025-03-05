@@ -1,43 +1,62 @@
 package main;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import javax.swing.JComponent;
+import java.util.Random;
 
-public class Array extends JComponent {
+import javax.swing.JPanel;
+
+import IntSpaces.ArraySpace;
+import IntSpaces.IntSpace;
+import main.managers.GameManager;
+
+public class Array extends JPanel {
+	private static final long serialVersionUID = 4981441440807683209L;
+
+	private GameManager gameManager;
 	
-	final int ARRAY_SIZE;
-	final int BORDER_WEIGHT = 10;
-	int arrayWidth;
-	int arrayHeight;
+	private String arrName;
+	private int arrListIdx;
 	
-	ArraySpace[] spaces;
+	private final int ARRAY_SIZE;
+	private IntSpace[] spaces;
+	private int[] values;
 	
-	public Array(int x, int y, int size) {
+	public Array(GameManager manager, int size, int arrListIdx) {
+		gameManager = manager;
+		
+		this.arrListIdx = arrListIdx;
+		this.arrName = "arr_" + Character.toString((char)(arrListIdx + 97)); // Name starts at arr_a, then letters increase 
 		
 		this.ARRAY_SIZE = size;
-		this.spaces = new ArraySpace[ARRAY_SIZE];
+		this.spaces = new IntSpace[ARRAY_SIZE];
+		this.values = new int[ARRAY_SIZE];
 		
-		this.arrayWidth = BORDER_WEIGHT;
+		Random random = new Random();
 		for(int i = 0; i < ARRAY_SIZE; i++) {
-			spaces[i] = new ArraySpace(arrayWidth, BORDER_WEIGHT, 0);
-			arrayWidth += ArraySpace.getWidth() + BORDER_WEIGHT;
+			int nextVal = random.nextInt(100);
+			spaces[i] = new ArraySpace(gameManager, this, i, nextVal);
+			values[i] = nextVal;
 		}
-		this.arrayHeight = 2 * BORDER_WEIGHT + ArraySpace.getHeight();
-		
-		this.setPreferredSize(new Dimension(arrayWidth, arrayHeight));
+		manager.visualManager().drawArr(this);
 	}
 	
-	@Override
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.RED);
-		g.fillRect(0, 0, arrayWidth, arrayHeight);
-		g.setColor(Color.BLUE);
-		for(int i = 0; i < ARRAY_SIZE; i++) {
-			ArraySpace curr = spaces[i];
-			g.fillRect(curr.getX(), curr.getY(), ArraySpace.getWidth(), ArraySpace.getHeight());
-		}
+	public int getListIdx() {
+		return arrListIdx;
+	}
+	
+	public String getName() {
+		return arrName;
+	}
+	
+	public int length() {
+		return ARRAY_SIZE;
+	}
+	
+	public IntSpace[] getSpaces() {
+		return spaces;
+	}
+	
+	public int[] getValues() {
+		return values;
 	}
 	
 }
