@@ -6,10 +6,10 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
-import IntSpaces.*;
-import commands.*;
+import main.commands.*;
 import main.Array;
 import main.Game;
+import main.spaces.*;
 
 public class GameManager {
 	private Game game;
@@ -26,6 +26,11 @@ public class GameManager {
 	
 	private int heldValue;
 	private IntSpace currMouseSpace; // What space is the mouse hovering over
+	private PointerSpace selectedPointer;
+	
+	VariableSpace scoreVar;
+	VariableSpace levelVar;
+	VariableSpace tempVar;
 	
 	private Stack<IntSpace> editedSpaces;
 	private Stack<Integer> overwrittenVals; // Of the edited spaces
@@ -58,22 +63,28 @@ public class GameManager {
 		visualManager.initGameScreen();
 		addArray(5);
 		addArray(4);
-		addVariable("score", 0, true);
-		addVariable("level", 0, true);
-		addVariable("temp", 0, false);
+		scoreVar = addVariable("score", 0, true);
+		levelVar = addVariable("level", 0, true);
+		tempVar = addVariable("temp", 0, false);
+		addCommand();
+		addCommand();
+		addCommand();
+		addCommand();
 		addCommand();
 	}
 	
-	private void addArray(int size) {
+	private Array addArray(int size) {
 		Array arr = new Array(this, size, arrays.size());
 		arrays.add(arr);
 		arraysState.add(arr.getValues()); // Shallow copy is ok, we want the arraysState values to be tied to the arr values
 		//arraysStartCommandState.add(Arrays.copyOfRange(arr.getValues(), 0, arr.length()));
+		return arr;
 	}
 	
-	private void addVariable(String name, int value, boolean readOnly) {
+	private VariableSpace addVariable(String name, int value, boolean readOnly) {
 		VariableSpace var = new VariableSpace(this, name, value, readOnly);
 		visualManager.drawVariable(var);
+		return var;
 	}
 	
 	private void addCommand() {
@@ -89,8 +100,14 @@ public class GameManager {
 		}
 		
 		switch(type) {
+		case SET:
+			command = new SetCommand(this, state, tempVar);
+			break;
 		case SWAP:
 			command = new SwapCommand(this, state);
+			break;
+		default:
+			break;
 		}
 		commands.add(command);
 		mostRecentlyAddedCommand = command;
@@ -98,6 +115,8 @@ public class GameManager {
 		
 		// If the command was added when the commands queue was empty
 		if(commands.size() == 1) {
+			clearUndoAndReset();
+			mostRecentlyAddedCommand.setup();
 			if(checkCommandComplete()) {
 				completeCommand();
 			}
@@ -116,15 +135,15 @@ public class GameManager {
 	
 	public void completeCommand() {
 		commands.remove();
-		editedSpaces.clear();
-		overwrittenVals.clear();
-		visualManager.setUndoButtonEnabled(false);
-		visualManager.setResetButtonEnabled(false);
+		clearUndoAndReset();
 		visualManager.removeCommand();
-		System.out.println("Complete");
-		// Check if subsequent commands are complete
-		if(checkCommandComplete()) {
-			completeCommand();
+		
+		if(commands.peek() != null) {
+			commands.peek().setup();
+			// Check if subsequent commands are complete
+			if(checkCommandComplete()) {
+				completeCommand();
+			}
 		}
 	}
 	
@@ -151,6 +170,10 @@ public class GameManager {
 			}
 		}
 		visualManager.reportVisualMouseEvent(reportedSpace, e);
+	}
+	
+	public void reportMouseEvent(PointerSpace reportedSpace, MouseEventType e) {
+		
 	}
 	
 	/*
@@ -180,6 +203,13 @@ public class GameManager {
 		while(!editedSpaces.empty()) {
 			undoMove();
 		}
+	}
+	
+	private void clearUndoAndReset() {
+		editedSpaces.clear();
+		overwrittenVals.clear();
+		visualManager.setUndoButtonEnabled(false);
+		visualManager.setResetButtonEnabled(false);
 	}
 	
 	public String getNameFromArr(int arrIdx) {

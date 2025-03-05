@@ -1,4 +1,4 @@
-package commands;
+package main.commands;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,8 @@ public abstract class Command {
 	protected String commandText;
 	
 	protected abstract void computeGoalState();
+	
+	public abstract void setup();
 	
 	public boolean checkGoalReached(ArrayList<int[]> currState) {
 		for(int i = 0; i < currState.size(); i++) {

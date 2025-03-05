@@ -1,4 +1,4 @@
-package custompanels;
+package main.custompanels;
 
 import java.awt.Graphics;
 

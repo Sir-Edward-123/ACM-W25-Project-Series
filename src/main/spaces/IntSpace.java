@@ -1,4 +1,4 @@
-package IntSpaces;
+package main.spaces;
 
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -25,7 +25,7 @@ public abstract class IntSpace extends JPanel implements MouseListener{
 		this.updateDispValue();
 		
 		JPanel numberLabelAlignmentPanel = new JPanel();
-		numberLabelAlignmentPanel.setPreferredSize(new Dimension(gameManager.visualManager().intSpaceDimensions().width, 40));
+		numberLabelAlignmentPanel.setPreferredSize(new Dimension(gameManager.visualManager().spaceDimensions().width, 40));
 		numberLabelAlignmentPanel.setOpaque(false);
 		numberLabelAlignmentPanel.add(valueDisp);
 		this.add(numberLabelAlignmentPanel);

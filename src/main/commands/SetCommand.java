@@ -1,42 +1,45 @@
-package commands;
+package main.commands;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 import main.managers.GameManager;
+import main.spaces.VariableSpace;
 
-public class SwapCommand extends Command {
-
-	public SwapCommand(GameManager gameManager, ArrayList<int[]> startingState) {
+public class SetCommand extends Command {
+	
+	VariableSpace tempSpace;
+	private int setVal;
+	
+	public SetCommand(GameManager gameManager, ArrayList<int[]> startingState, VariableSpace temp) {
 		this.gameManager = gameManager;
 		this.deepCopyGameStateToGoalState(startingState);
+		this.tempSpace = temp;
 		this.computeGoalState();
 	}
 	
+	@Override
+	public void setup() {
+		tempSpace.setValue(setVal);
+	}
 
 	@Override
 	protected void computeGoalState() {
 		Random random = new Random();
-		int sourceArrIdx = random.nextInt(goalState.size());
-		int sourceElemIdx = random.nextInt(goalState.get(sourceArrIdx).length);
+		setVal = random.nextInt(100);
 		int destArrIdx = random.nextInt(goalState.size());
 		int destElemIdx = random.nextInt(goalState.get(destArrIdx).length);
 		
-		goalState.get(destArrIdx)[destElemIdx] = goalState.get(sourceArrIdx)[sourceElemIdx];
+		goalState.get(destArrIdx)[destElemIdx] = setVal;
 		
 		// Generate command text
 		StringBuilder str = new StringBuilder();
+		str.append("temp = " + setVal + "; ");
 		str.append(gameManager.getNameFromArr(destArrIdx));
-		str.append('[');
-		str.append(destElemIdx);
-		str.append(']');
+		str.append("[" + destElemIdx + "]");
 		str.append(" = ");
-		str.append(gameManager.getNameFromArr(sourceArrIdx));
-		str.append('[');
-		str.append(sourceElemIdx);
-		str.append(']');
+		str.append("temp");
 		str.append(';');
 		this.commandText = str.toString();
 	}
-	
 }

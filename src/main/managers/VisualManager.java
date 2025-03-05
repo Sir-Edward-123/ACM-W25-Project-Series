@@ -17,10 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
-import IntSpaces.*;
-import commands.Command;
-import custompanels.*;
+import main.commands.Command;
+import main.custompanels.*;
 import main.Array;
+import main.spaces.*;
 
 public class VisualManager {
 	//public static final Color TRANSPARENT = new Color(255, 255, 255, 0);
@@ -31,8 +31,8 @@ public class VisualManager {
 	private static final Color COMM_BOX_COLOR = new Color(230, 230, 230);
 	private static final Color ARRAY_COLOR = new Color(140, 140, 140, 255);
 	private static final Color ARRAY_COLOR_TRANSPARENT = new Color(140, 140, 140, 0);
-	private static final Color INT_SPACE_COLOR = new Color(160, 160, 160, 255);
-	private static final Color INT_SPACE_COLOR_TRANSPARENT = new Color(160, 160, 160, 0);
+	private static final Color SPACE_COLOR = new Color(160, 160, 160, 255);
+	private static final Color SPACE_COLOR_TRANSPARENT = new Color(160, 160, 160, 0);
 	private static final Color INT_COLOR = new Color(50, 50, 50);
 	private static final Color BUTTON_COLOR = new Color(180, 180, 180);
 	// These colors are for the DrawPanel
@@ -55,10 +55,10 @@ public class VisualManager {
 	private static final Dimension INFO_PANEL_DIMENSIONS = new Dimension(2 * (WINDOW_WIDTH - 30) / 10, WINDOW_HEIGHT - 10);
 	private static final Dimension COMM_LIST_DIMENSIONS = new Dimension(INFO_PANEL_DIMENSIONS.width - 10, INFO_PANEL_DIMENSIONS.height - 150);
 	private static final Dimension COMM_BOX_DIMENSIONS = new Dimension(COMM_LIST_DIMENSIONS.width - 20, COMMAND_FONT.getSize() + 10);
-	private static final Dimension INT_SPACE_DIMENSIONS = new Dimension(100, 65);
+	private static final Dimension SPACE_DIMENSIONS = new Dimension(100, 65);
 	private static final Dimension BUTTON_DIMENSIONS = new Dimension(100, 50);
 	
-	private static final int RIGID_AREA_HEIGHT = 30;
+	private static final int RIGID_AREA_HEIGHT = 25;
 	
 	private GameManager gameManager;
 	
@@ -206,14 +206,14 @@ public class VisualManager {
 		arr.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		for(IntSpace space : arr.getSpaces()) {
-			space.setPreferredSize(INT_SPACE_DIMENSIONS);
-			space.setBackground(INT_SPACE_COLOR);
+			space.setPreferredSize(SPACE_DIMENSIONS);
+			space.setBackground(SPACE_COLOR);
 			arr.add(space);
 		}
 		
 		// Clean up how to set max size
-		int max_size_x = (INT_SPACE_DIMENSIONS.width * arr.length()) + (5 * (arr.length() + 1));
-		int max_size_y = INT_SPACE_DIMENSIONS.height + 10;
+		int max_size_x = (SPACE_DIMENSIONS.width * arr.length()) + (5 * (arr.length() + 1));
+		int max_size_y = SPACE_DIMENSIONS.height + 10;
 		arr.setMaximumSize(new Dimension(max_size_x, max_size_y));
 		
 		heap.add(arr);
@@ -224,8 +224,8 @@ public class VisualManager {
 	}
 	
 	public void drawVariable(VariableSpace space) {
-		space.setPreferredSize(INT_SPACE_DIMENSIONS);
-		space.setBackground(INT_SPACE_COLOR);
+		space.setPreferredSize(SPACE_DIMENSIONS);
+		space.setBackground(SPACE_COLOR);
 		subStackLeft.add(space);
 		
 		JPanel emptySpace = new JPanel();
@@ -351,8 +351,8 @@ public class VisualManager {
 		return layeredPane;
 	}
 	
-	public Dimension intSpaceDimensions() {
-		return INT_SPACE_DIMENSIONS;
+	public Dimension spaceDimensions() {
+		return SPACE_DIMENSIONS;
 	}
 	
 	public Color heldValBoxColor() {

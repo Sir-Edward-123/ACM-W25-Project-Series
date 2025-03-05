@@ -4,9 +4,9 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-import IntSpaces.ArraySpace;
-import IntSpaces.IntSpace;
 import main.managers.GameManager;
+import main.spaces.ArraySpace;
+import main.spaces.IntSpace;
 
 public class Array extends JPanel {
 	private static final long serialVersionUID = 4981441440807683209L;

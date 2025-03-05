@@ -1,4 +1,4 @@
-package IntSpaces;
+package main.spaces;
 
 import main.Array;
 import main.managers.GameManager;

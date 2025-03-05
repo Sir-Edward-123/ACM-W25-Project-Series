@@ -1,4 +1,4 @@
-package IntSpaces;
+package main.spaces;
 
 import javax.swing.JLabel;
 
@@ -19,7 +19,7 @@ public class VariableSpace extends IntSpace{
 		this.readOnly = readOnly;
 		setup();
 		
-		info = new JLabel(name);
+		info = new JLabel("int " + name);
 		if(readOnly) {
 			info.setText(info.getText() + " (r-only)");
 		}
