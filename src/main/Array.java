@@ -17,7 +17,7 @@ public class Array extends JPanel {
 	private int arrListIdx;
 	
 	private final int ARRAY_SIZE;
-	private IntSpace[] spaces;
+	private ArraySpace[] spaces;
 	private int[] values;
 	
 	public Array(GameManager manager, int size, int arrListIdx) {
@@ -27,7 +27,7 @@ public class Array extends JPanel {
 		this.arrName = "arr_" + Character.toString((char)(arrListIdx + 97)); // Name starts at arr_a, then letters increase 
 		
 		this.ARRAY_SIZE = size;
-		this.spaces = new IntSpace[ARRAY_SIZE];
+		this.spaces = new ArraySpace[ARRAY_SIZE];
 		this.values = new int[ARRAY_SIZE];
 		
 		Random random = new Random();
@@ -36,7 +36,6 @@ public class Array extends JPanel {
 			spaces[i] = new ArraySpace(gameManager, this, i, nextVal);
 			values[i] = nextVal;
 		}
-		manager.visualManager().drawArr(this);
 	}
 	
 	public int getListIdx() {
@@ -51,7 +50,7 @@ public class Array extends JPanel {
 		return ARRAY_SIZE;
 	}
 	
-	public IntSpace[] getSpaces() {
+	public ArraySpace[] getSpaces() {
 		return spaces;
 	}
 	

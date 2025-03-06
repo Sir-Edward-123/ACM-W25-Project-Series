@@ -10,28 +10,10 @@ import javax.swing.JPanel;
 import main.managers.GameManager;
 import main.managers.MouseEventType;
 
-public abstract class IntSpace extends JPanel implements MouseListener{
+public abstract class IntSpace extends Space implements MouseListener{
 	private static final long serialVersionUID = -7872764423985816177L;
 	
-	protected GameManager gameManager;
 	protected int value;
-	protected boolean readOnly;
-	
-	protected JLabel valueDisp;
-	
-	protected void setup() {
-		valueDisp = new JLabel();
-		gameManager.visualManager().styleArrJLabel(valueDisp);
-		this.updateDispValue();
-		
-		JPanel numberLabelAlignmentPanel = new JPanel();
-		numberLabelAlignmentPanel.setPreferredSize(new Dimension(gameManager.visualManager().spaceDimensions().width, 40));
-		numberLabelAlignmentPanel.setOpaque(false);
-		numberLabelAlignmentPanel.add(valueDisp);
-		this.add(numberLabelAlignmentPanel);
-		this.addMouseListener(this);
-	}
-	
 	
 	public int getValue() {
 		return value;
@@ -39,10 +21,7 @@ public abstract class IntSpace extends JPanel implements MouseListener{
 	
 	public abstract void setValue(int value);
 	
-	public boolean readOnly() {
-		return readOnly;
-	}
-	
+	@Override
 	protected void updateDispValue() {
 		valueDisp.setText(Integer.toString(value));
 	}

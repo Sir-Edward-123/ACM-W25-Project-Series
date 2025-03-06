@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import main.managers.GameManager;
+import main.spaces.ArraySpace;
+import main.spaces.PointerSpace;
 
 public class SwapCommand extends Command {
 
-	public SwapCommand(GameManager gameManager, ArrayList<int[]> startingState) {
+	public SwapCommand(GameManager gameManager, ArrayList<int[]> startArrState, ArraySpace[] startPtrState, int level) {
 		this.gameManager = gameManager;
-		this.deepCopyGameStateToGoalState(startingState);
-		this.computeGoalState();
+		this.deepCopyGameStateToGoalState(startArrState, startPtrState);
+		this.pointValue = 2;
+		this.computeGoalState(level);
 	}
 	
 	@Override
@@ -20,22 +23,20 @@ public class SwapCommand extends Command {
 	
 
 	@Override
-	protected void computeGoalState() {
+	protected void computeGoalState(int level) {
 		Random random = new Random();
-		int sourceArrIdx = random.nextInt(goalState.size());
-		int sourceElemIdx = random.nextInt(goalState.get(sourceArrIdx).length);
-		int destArrIdx = random.nextInt(goalState.size());
-		int destElemIdx = random.nextInt(goalState.get(destArrIdx).length);
+		int sourceArrIdx = random.nextInt(goalArrState.size());
+		int sourceElemIdx = random.nextInt(goalArrState.get(sourceArrIdx).length);
+		int destArrIdx = random.nextInt(goalArrState.size());
+		int destElemIdx = random.nextInt(goalArrState.get(destArrIdx).length);
 		
-		goalState.get(destArrIdx)[destElemIdx] = goalState.get(sourceArrIdx)[sourceElemIdx];
+		goalArrState.get(destArrIdx)[destElemIdx] = goalArrState.get(sourceArrIdx)[sourceElemIdx];
 		
 		// Generate command text
 		StringBuilder str = new StringBuilder();
-		str.append(gameManager.getNameFromArr(destArrIdx));
-		str.append("[" + destElemIdx + "]");
+		this.appendFormatedArrNameAndIdx(str, destArrIdx, destElemIdx, usePtrArithm(random, level));
 		str.append(" = ");
-		str.append(gameManager.getNameFromArr(sourceArrIdx));
-		str.append("[" + sourceElemIdx + "]");
+		this.appendFormatedArrNameAndIdx(str, sourceArrIdx, sourceElemIdx, usePtrArithm(random, level));
 		str.append(';');
 		this.commandText = str.toString();
 	}

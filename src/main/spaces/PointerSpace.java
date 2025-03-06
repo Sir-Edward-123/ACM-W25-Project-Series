@@ -10,37 +10,56 @@ import javax.swing.JPanel;
 import main.managers.GameManager;
 import main.managers.MouseEventType;
 
-public class PointerSpace extends JPanel implements MouseListener {
+public class PointerSpace extends Space implements MouseListener {
 	private static final long serialVersionUID = -5489542104657810875L;
-	
-	GameManager gameManager;
 	
 	String name;
 	ArraySpace arrSpacePointingTo;
 	
-	JLabel valueDisp;
+	JLabel info;
 	
-	public PointerSpace(GameManager manager, String name, ArraySpace pointTo) {
+	public PointerSpace(GameManager manager, String name, ArraySpace pointTo, boolean readOnly) {
 		this.gameManager = manager;
 		this.name = name;
 		this.arrSpacePointingTo = pointTo;
+		this.readOnly = readOnly;
 		
-		valueDisp = new JLabel();
-		//gameManager.visualManager().styleArrJLabel(valueDisp);
-		this.updateDispValue();
+		this.spaceSetup();
+		this.pointerSetup();
+	}
+	
+	private void pointerSetup() {
+		gameManager.visualManager().stylePointerJLabel(valueDisp);
 		
-		JPanel nameLabelAlignmentPanel = new JPanel();
-		nameLabelAlignmentPanel.setPreferredSize(new Dimension(gameManager.visualManager().spaceDimensions().width, 40));
-		nameLabelAlignmentPanel.setOpaque(false);
-		nameLabelAlignmentPanel.add(valueDisp);
-		this.add(nameLabelAlignmentPanel);
-		this.addMouseListener(this);
+		info = new JLabel("int *" + name);
+		/*
+		if(readOnly) {
+			info.setText(info.getText() + " (r-only)");
+		}
+		*/
+		this.add(info);
 		
 		this.addMouseListener(this);
 	}
 	
+	public ArraySpace getPointingTo() {
+		return arrSpacePointingTo;
+	}
+	
+	public void setValue(ArraySpace pointTo) {
+		if(readOnly) {
+			return;
+		}
+		this.arrSpacePointingTo = pointTo;
+		this.updateDispValue();
+	}
+	
+	@Override
 	protected void updateDispValue() {
-		valueDisp.setText("");
+		StringBuilder str = new StringBuilder();
+		str.append(arrSpacePointingTo.getParentArr().getName());
+		str.append("[" + arrSpacePointingTo.getIdx() + "]");
+		valueDisp.setText(str.toString());
 	}
 
 	@Override

@@ -28,12 +28,14 @@ public class VisualManager {
 	private static final Color SUB_MEMORY_COLOR = new Color(200, 200, 200);
 	private static final Color INFO_PANEL_COLOR = new Color(220, 220, 220);
 	private static final Color COMM_LIST_COLOR = new Color(200, 200, 200);
+	private static final Color COMM_LIST_DANGER_COLOR = new Color(200, 160, 160, 255);
 	private static final Color COMM_BOX_COLOR = new Color(230, 230, 230);
 	private static final Color ARRAY_COLOR = new Color(140, 140, 140, 255);
-	private static final Color ARRAY_COLOR_TRANSPARENT = new Color(140, 140, 140, 0);
+	//private static final Color ARRAY_COLOR_TRANSPARENT = new Color(140, 140, 140, 0);
 	private static final Color SPACE_COLOR = new Color(160, 160, 160, 255);
-	private static final Color SPACE_COLOR_TRANSPARENT = new Color(160, 160, 160, 0);
-	private static final Color INT_COLOR = new Color(50, 50, 50);
+	private static final Color READONLY_SPACE_COLOR = new Color(200, 160, 160, 255);
+	//private static final Color SPACE_COLOR_TRANSPARENT = new Color(160, 160, 160, 0);
+	private static final Color SPACE_TEXT_COLOR = new Color(50, 50, 50);
 	private static final Color BUTTON_COLOR = new Color(180, 180, 180);
 	// These colors are for the DrawPanel
 	private static final Color HELD_VAL_BOX_COLOR = new Color(100, 120, 100);
@@ -41,7 +43,8 @@ public class VisualManager {
 	
 	private static final Font PANEL_LABEL_FONT = new Font("Consolas", Font.BOLD, 20);
 	private static final Font BUTTON_FONT = new Font("Consolas", Font.PLAIN, 20);
-	private static final Font ARR_FONT = new Font("Consolas", Font.BOLD, 45);
+	private static final Font INT_FONT = new Font("Consolas", Font.BOLD, 45);
+	private static final Font POINTER_FONT = new Font("Consolas", Font.BOLD, 20);
 	private static final Font COMMAND_FONT = new Font("Consolas", Font.PLAIN, 15);
 	// These fonts are for the DrawPanel
 	private static final Font HELD_VAL_FONT = new Font("Consolas", Font.PLAIN, 25);
@@ -58,7 +61,7 @@ public class VisualManager {
 	private static final Dimension SPACE_DIMENSIONS = new Dimension(100, 65);
 	private static final Dimension BUTTON_DIMENSIONS = new Dimension(100, 50);
 	
-	private static final int RIGID_AREA_HEIGHT = 25;
+	private static final int RIGID_AREA_HEIGHT = 20;
 	
 	private GameManager gameManager;
 	
@@ -85,7 +88,7 @@ public class VisualManager {
 		startScrn.setPreferredSize(WINDOW_DIMENSIONS);
 		
 		// Start screen elems
-		startScrn.add(new JLabel("Start Screen Placeholder"));
+		startScrn.add(new JLabel("Array Anarchy: A Java game about C++ arrays"));
 		JButton button = new JButton("Start");
 		button.addActionListener(e -> gameManager.game().startGame());
 		startScrn.add(button);
@@ -225,13 +228,52 @@ public class VisualManager {
 	
 	public void drawVariable(VariableSpace space) {
 		space.setPreferredSize(SPACE_DIMENSIONS);
-		space.setBackground(SPACE_COLOR);
+		if(space.readOnly()) {
+			space.setBackground(READONLY_SPACE_COLOR);
+		}
+		else {
+			space.setBackground(SPACE_COLOR);
+		}
 		subStackLeft.add(space);
 		
 		JPanel emptySpace = new JPanel();
 		emptySpace.setPreferredSize(new Dimension(SUB_STACK_DIMENSIONS.width, RIGID_AREA_HEIGHT));
 		emptySpace.setOpaque(false);
 		subStackLeft.add(emptySpace);
+	}
+	
+	public void drawVariablePointer(PointerSpace space) {
+		space.setPreferredSize(SPACE_DIMENSIONS);
+		if(space.readOnly()) {
+			space.setBackground(READONLY_SPACE_COLOR);
+		}
+		else {
+			space.setBackground(SPACE_COLOR);
+		}
+		subStackLeft.add(space);
+		
+		JPanel emptySpace = new JPanel();
+		emptySpace.setPreferredSize(new Dimension(SUB_STACK_DIMENSIONS.width, RIGID_AREA_HEIGHT));
+		emptySpace.setOpaque(false);
+		subStackLeft.add(emptySpace);
+	}
+	
+	public void drawArrPointer(PointerSpace space) {
+		space.setPreferredSize(SPACE_DIMENSIONS);
+		if(space.readOnly()) {
+			space.setBackground(READONLY_SPACE_COLOR);
+		}
+		else {
+			space.setBackground(SPACE_COLOR);
+		}
+		subStackRight.add(space);
+		
+		JPanel emptySpace = new JPanel();
+		emptySpace.setPreferredSize(new Dimension(SUB_STACK_DIMENSIONS.width, RIGID_AREA_HEIGHT));
+		emptySpace.setOpaque(false);
+		subStackRight.add(emptySpace);
+		
+		drawPanel.incNumArrows();
 	}
 	
 	/*
@@ -324,9 +366,25 @@ public class VisualManager {
 		commandList.validate();
 	}
 	
-	public void styleArrJLabel(JLabel label) {
-		label.setFont(ARR_FONT);
-		label.setForeground(INT_COLOR);
+	public void flashCommandList() {
+		commandList.setBackground(COMM_LIST_DANGER_COLOR);
+		Timer flashTimer = new Timer(100, e -> unflashCommandList());
+		flashTimer.setRepeats(false);
+		flashTimer.start();
+	}
+	
+	public void unflashCommandList() {
+		commandList.setBackground(COMM_LIST_COLOR);
+	}
+	
+	public void styleIntJLabel(JLabel label) {
+		label.setFont(INT_FONT);
+		label.setForeground(SPACE_TEXT_COLOR);
+	}
+	
+	public void stylePointerJLabel(JLabel label) {
+		label.setFont(POINTER_FONT);
+		label.setForeground(SPACE_TEXT_COLOR);
 	}
 	
 	public void setUndoButtonEnabled(boolean enabled) {
@@ -344,6 +402,15 @@ public class VisualManager {
 		}
 		else if(e == MouseEventType.MOUSE_RELEASED) {
 			drawPanel.setShouldDrawHeldValue(false);
+		}
+	}
+	
+	public void reportVisualMouseEvent(PointerSpace pointerSpace, MouseEventType e) {
+		if(e == MouseEventType.MOUSE_PRESSED) {
+			drawPanel.setShouldDrawPointerArrow(true);
+		}
+		else if(e == MouseEventType.MOUSE_RELEASED) {
+			drawPanel.setShouldDrawPointerArrow(false);
 		}
 	}
 

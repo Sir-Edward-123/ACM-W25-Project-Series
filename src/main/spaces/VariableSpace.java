@@ -17,19 +17,35 @@ public class VariableSpace extends IntSpace{
 		this.name = name;
 		this.value = value;
 		this.readOnly = readOnly;
-		setup();
+		
+		this.spaceSetup();
+		this.variableSetup();
+	}
+	
+	private void variableSetup() {
+		gameManager.visualManager().styleIntJLabel(valueDisp);
 		
 		info = new JLabel("int " + name);
+		/*
 		if(readOnly) {
 			info.setText(info.getText() + " (r-only)");
 		}
+		*/
 		this.add(info);
+		
+		this.addMouseListener(this);
 	}
 	
 	public void setValue(int value) {
 		if(readOnly) {
 			return;
 		}
+		this.value = value;
+		this.updateDispValue();
+	}
+	
+	// Use only when the game has to set a readonly value
+	public void gameSetValue(int value) {
 		this.value = value;
 		this.updateDispValue();
 	}

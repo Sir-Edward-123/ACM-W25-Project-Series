@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import main.managers.GameManager;
+import main.spaces.ArraySpace;
 import main.spaces.VariableSpace;
 
 public class SetCommand extends Command {
@@ -11,11 +12,12 @@ public class SetCommand extends Command {
 	VariableSpace tempSpace;
 	private int setVal;
 	
-	public SetCommand(GameManager gameManager, ArrayList<int[]> startingState, VariableSpace temp) {
+	public SetCommand(GameManager gameManager, ArrayList<int[]> startArrState, ArraySpace[] startPtrState, int level, VariableSpace temp) {
 		this.gameManager = gameManager;
-		this.deepCopyGameStateToGoalState(startingState);
+		this.deepCopyGameStateToGoalState(startArrState, startPtrState);
 		this.tempSpace = temp;
-		this.computeGoalState();
+		this.pointValue = 1;
+		this.computeGoalState(level);
 	}
 	
 	@Override
@@ -24,19 +26,18 @@ public class SetCommand extends Command {
 	}
 
 	@Override
-	protected void computeGoalState() {
+	protected void computeGoalState(int level) {
 		Random random = new Random();
 		setVal = random.nextInt(100);
-		int destArrIdx = random.nextInt(goalState.size());
-		int destElemIdx = random.nextInt(goalState.get(destArrIdx).length);
+		int destArrIdx = random.nextInt(goalArrState.size());
+		int destElemIdx = random.nextInt(goalArrState.get(destArrIdx).length);
 		
-		goalState.get(destArrIdx)[destElemIdx] = setVal;
+		goalArrState.get(destArrIdx)[destElemIdx] = setVal;
 		
 		// Generate command text
 		StringBuilder str = new StringBuilder();
 		str.append("temp = " + setVal + "; ");
-		str.append(gameManager.getNameFromArr(destArrIdx));
-		str.append("[" + destElemIdx + "]");
+		this.appendFormatedArrNameAndIdx(str, destArrIdx, destElemIdx, usePtrArithm(random, level));
 		str.append(" = ");
 		str.append("temp");
 		str.append(';');

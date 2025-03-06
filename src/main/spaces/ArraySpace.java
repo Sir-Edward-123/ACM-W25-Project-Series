@@ -16,7 +16,14 @@ public class ArraySpace extends IntSpace{
 		this.idx = idx;
 		this.value = value;
 		this.readOnly = false;
-		setup();
+		
+		this.spaceSetup();
+		this.arraySpaceSetup();
+	}
+	
+	private void arraySpaceSetup() {
+		gameManager.visualManager().styleIntJLabel(valueDisp);
+		this.addMouseListener(this);
 	}
 	
 	public int getIdx() {

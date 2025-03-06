@@ -1,5 +1,6 @@
 package main.custompanels;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JPanel;
@@ -18,8 +19,10 @@ public class DrawPanel extends JPanel {
 	Timer boxSizeTimer;
 	
 	private boolean shouldDrawHeldValue;
+	private boolean shouldDrawPointerArrow;
 	private int drawValue;
 	private int boxSize = 0;
+	private int numDrawArrows = 0;
 	
 	public DrawPanel(GameManager gameManager, VisualManager visualManager) {
 		this.gameManager = gameManager;
@@ -40,6 +43,10 @@ public class DrawPanel extends JPanel {
 		}
 	}
 	
+	public void setShouldDrawPointerArrow(boolean shouldDraw) {
+		shouldDrawPointerArrow = shouldDraw;
+	}
+	
 	public void setDrawValue(int val) {
 		drawValue = val;
 	}
@@ -50,15 +57,34 @@ public class DrawPanel extends JPanel {
 			boxSizeTimer.stop();
 		}
 	}
+	
+	public void incNumArrows() {
+		numDrawArrows++;
+	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
+		int arrowX = 250;
+		int arrowY = 90;
+		for(int i = 0; i < numDrawArrows; i++) {
+			g.drawLine(arrowX, arrowY, arrowX + 30, arrowY);
+			g.fillPolygon(new int[]{arrowX + 30, arrowX + 30, arrowX + 35}, new int[]{arrowY - 5, arrowY + 5, arrowY}, 3);
+			arrowY += 95;
+		}
+		
 		if(this.getMousePosition() == null) {
 			return;
 		}
 		int x = this.getMousePosition().x;
 		int y = this.getMousePosition().y;
+		
+		if(shouldDrawPointerArrow) {
+			g.setColor(Color.RED);
+			g.fillPolygon(new int[]{x - 10, x + 10, x}, new int[]{y, y, y - 10}, 3);
+		}
+		
 		if(shouldDrawHeldValue) {
 			g.setColor(visualManager.heldValBoxColor());
 			g.fillRect(x - 20, y - 20, (int)(boxSize * 1.5), boxSize);
