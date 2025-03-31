@@ -29,15 +29,36 @@ public class SetCommand extends Command {
 	protected void computeGoalState(int level) {
 		Random random = new Random();
 		setVal = random.nextInt(100);
-		int destArrIdx = random.nextInt(goalArrState.size());
-		int destElemIdx = random.nextInt(goalArrState.get(destArrIdx).length);
+		
+		int destArrIdx;
+		int destElemIdx;
+		
+		boolean destUsingPtr = random.nextBoolean();
+		int destPtrIdx = -1;
+		
+		if(destUsingPtr) {
+			destPtrIdx = random.nextInt(goalPtrState.length);
+			ArraySpace arrSpace = goalPtrState[destPtrIdx];
+			//ArraySpace arrSpace = gameManager.getPtrPointingTo(destPtrIdx);
+			destArrIdx = arrSpace.getParentArr().getListIdx();
+			destElemIdx = arrSpace.getIdx();
+		}
+		else {
+			destArrIdx = random.nextInt(goalArrState.size());
+			destElemIdx = random.nextInt(goalArrState.get(destArrIdx).length);
+		}
 		
 		goalArrState.get(destArrIdx)[destElemIdx] = setVal;
 		
 		// Generate command text
 		StringBuilder str = new StringBuilder();
 		str.append("temp = " + setVal + "; ");
-		this.appendFormatedArrNameAndIdx(str, destArrIdx, destElemIdx, usePtrArithm(random, level));
+		if(destUsingPtr) {
+			str.append("*" + gameManager.getNameFromPtr(destPtrIdx));
+		}
+		else {
+			this.appendFormatedArrNameAndIdx(str, destArrIdx, destElemIdx, usePtrArithm(random, level), true);
+		}
 		str.append(" = ");
 		str.append("temp");
 		str.append(';');

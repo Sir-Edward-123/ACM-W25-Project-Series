@@ -28,7 +28,7 @@ public abstract class Command {
 			}
 		}
 		for(int i = 0; i < currPtrState.length; i++) {
-			if(currPtrState[i] != currPtrState[i]) {
+			if(currPtrState[i] != goalPtrState[i]) {
 				return false;
 			}
 		}
@@ -67,12 +67,18 @@ public abstract class Command {
 		}
 	}
 	
-	protected void appendFormatedArrNameAndIdx(StringBuilder str, int arrIdx, int elemIdx, boolean asPtrArithm) {
+	protected void appendFormatedArrNameAndIdx(StringBuilder str, int arrIdx, int elemIdx, boolean asPtrArithm, boolean deref) {
 		if(asPtrArithm) {
-			str.append("*(" + gameManager.getNameFromArr(arrIdx));
+			if(deref) {
+				str.append("*");
+			}
+			str.append("(" + gameManager.getNameFromArr(arrIdx));
 			str.append("+" + elemIdx + ")");
 		}
 		else {
+			if(!deref) {
+				str.append("&");
+			}
 			str.append(gameManager.getNameFromArr(arrIdx));
 			str.append("[" + elemIdx + "]");
 		}

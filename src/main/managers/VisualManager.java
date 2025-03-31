@@ -88,7 +88,7 @@ public class VisualManager {
 		startScrn.setPreferredSize(WINDOW_DIMENSIONS);
 		
 		// Start screen elems
-		startScrn.add(new JLabel("Array Anarchy: A Java game about C++ arrays"));
+		startScrn.add(new JLabel("Array Anarchy: A game C++ arrays"));
 		JButton button = new JButton("Start");
 		button.addActionListener(e -> gameManager.game().startGame());
 		startScrn.add(button);

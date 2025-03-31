@@ -30,8 +30,8 @@ public class Game {
 		gameFrame.pack();
 	}
 	
-	public void lose() {
-		JOptionPane.showMessageDialog(gameFrame, "Time Limit Exceeded: You Lose!");
+	public void lose(int score) {
+		JOptionPane.showMessageDialog(gameFrame, "Time Limit Exceeded: You Lose!\n" + "Final Score: " + score);
 		reset();
 	}
 	

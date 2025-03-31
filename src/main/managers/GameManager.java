@@ -53,11 +53,11 @@ public class GameManager {
 	int countdownStartSeconds = 20;
 	
 	// DEBUG VARS
-	int numStartingCommands = 1;
+	int numStartingCommands = 5;
 	int startingScore = 0;
 	int startingLevel = 0;
 	int nextLevelScoreIncrement = 20;
-	int startingSpawnDelay = 11000;
+	int startingSpawnDelay = 11000 - (startingLevel * 100);
 
 	public GameManager(Game game) {
 		this.game = game;
@@ -96,7 +96,7 @@ public class GameManager {
 		ptrs = new PointerSpace[3];
 		ptrsState = new ArraySpace[3];
 		for (int i = 0; i < ptrs.length; i++) {
-			ptrs[i] = addVariablePointer("ptr" + (i + 1), arrays.get(0).getSpaces()[0], false);
+			ptrs[i] = addVariablePointer("ptr" + (i + 1), arrays.get(0).getSpaces()[i], false, i);
 			ptrsState[i] = ptrs[i].getPointingTo();
 		}
 		for(int i = 0; i < numStartingCommands; i++) {
@@ -135,13 +135,13 @@ public class GameManager {
 	}
 
 	private PointerSpace addArrPointer(String name, ArraySpace pointTo) {
-		PointerSpace pointer = new PointerSpace(this, name, pointTo, true);
+		PointerSpace pointer = new PointerSpace(this, name, pointTo, true, -1);
 		visualManager.drawArrPointer(pointer);
 		return pointer;
 	}
 
-	private PointerSpace addVariablePointer(String name, ArraySpace pointTo, boolean readOnly) {
-		PointerSpace pointer = new PointerSpace(this, name, pointTo, readOnly);
+	private PointerSpace addVariablePointer(String name, ArraySpace pointTo, boolean readOnly, int pointerListIdx) {
+		PointerSpace pointer = new PointerSpace(this, name, pointTo, readOnly, pointerListIdx);
 		visualManager.drawVariablePointer(pointer);
 		return pointer;
 	}
@@ -179,6 +179,12 @@ public class GameManager {
 		case SET:
 			command = new SetCommand(this, arrState, ptrsState, levelVar.getValue(), tempVar);
 			break;
+		case SET_PTR:
+			command = new SetPointerCommand(this, arrState, ptrsState, levelVar.getValue());
+			break;
+		case COPY:
+			command = new CopyCommand(this, arrState, ptrsState, levelVar.getValue());
+			break;
 		case SWAP:
 			command = new SwapCommand(this, arrState, ptrsState, levelVar.getValue());
 			break;
@@ -194,7 +200,7 @@ public class GameManager {
 		visualManager.drawCommand(command);
 
 		// If the command was added when the commands queue was empty
-		if(commands.size()==1) {
+		if(commands.size() == 1) {
 			clearUndoAndReset();
 			mostRecentlyAddedCommand.setup();
 			if (checkCommandComplete()) {
@@ -255,7 +261,7 @@ public class GameManager {
 		countdownVar.gameSetValue(countdownVar.getValue() - 1);
 		visualManager.flashCommandList();
 		if(countdownVar.getValue() == 0) {
-			game.lose();
+			game.lose(scoreVar.getValue());
 		}
 	}
 
@@ -356,6 +362,22 @@ public class GameManager {
 
 	public int getNumArrs() {
 		return arrays.size();
+	}
+	
+	public ArraySpace getArrSpace(int arrIdx, int elemIdx) {
+		return arrays.get(arrIdx).getSpaces()[elemIdx];
+	}
+	
+	public String getNameFromPtr(int ptrListIdx) {
+		return ptrs[ptrListIdx].getName();
+	}
+	
+	public ArraySpace getPtrPointingTo(int ptrListIdx) {
+		return ptrs[ptrListIdx].getPointingTo();
+	}
+	
+	public void updatePtrState(int idx, ArraySpace space) {
+		ptrsState[idx] = space;
 	}
 
 	public Game game() {

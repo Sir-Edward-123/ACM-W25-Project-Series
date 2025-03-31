@@ -5,19 +5,20 @@ import java.util.Random;
 
 import main.managers.GameManager;
 import main.spaces.ArraySpace;
+import main.spaces.PointerSpace;
 
-public class SwapCommand extends Command{
-	
-	public SwapCommand(GameManager gameManager, ArrayList<int[]> startArrState, ArraySpace[] startPtrState, int level) {
+public class CopyCommand extends Command {
+
+	public CopyCommand(GameManager gameManager, ArrayList<int[]> startArrState, ArraySpace[] startPtrState, int level) {
 		this.gameManager = gameManager;
 		this.deepCopyGameStateToGoalState(startArrState, startPtrState);
-		this.pointValue = 4;
+		this.pointValue = 2;
 		this.computeGoalState(level);
 	}
 	
 	@Override
 	public void setup() {
-		System.out.println();
+		// Nothing
 	}
 	
 
@@ -58,28 +59,25 @@ public class SwapCommand extends Command{
 			destElemIdx = random.nextInt(goalArrState.get(destArrIdx).length);
 		}
 		
-		int temp = goalArrState.get(destArrIdx)[destElemIdx];
 		goalArrState.get(destArrIdx)[destElemIdx] = goalArrState.get(sourceArrIdx)[sourceElemIdx];
-		goalArrState.get(sourceArrIdx)[sourceElemIdx] = temp;
 		
 		// Generate command text
 		StringBuilder str = new StringBuilder();
-		str.append("swap(");
 		if(destUsingPtr) {
 			str.append("*" + gameManager.getNameFromPtr(destPtrIdx));
 		}
 		else {
 			this.appendFormatedArrNameAndIdx(str, destArrIdx, destElemIdx, usePtrArithm(random, level), true);
 		}
-		str.append(", ");
+		str.append(" = ");
 		if(sourceUsingPtr) {
 			str.append("*" + gameManager.getNameFromPtr(sourcePtrIdx));
 		}
 		else {
 			this.appendFormatedArrNameAndIdx(str, sourceArrIdx, sourceElemIdx, usePtrArithm(random, level), true);
 		}
-		str.append(")");
 		str.append(';');
 		this.commandText = str.toString();
 	}
+	
 }

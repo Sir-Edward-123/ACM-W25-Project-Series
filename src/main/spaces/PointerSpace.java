@@ -16,13 +16,16 @@ public class PointerSpace extends Space implements MouseListener {
 	String name;
 	ArraySpace arrSpacePointingTo;
 	
+	int pointerListIdx;
+	
 	JLabel info;
 	
-	public PointerSpace(GameManager manager, String name, ArraySpace pointTo, boolean readOnly) {
+	public PointerSpace(GameManager manager, String name, ArraySpace pointTo, boolean readOnly, int pointerListIdx) {
 		this.gameManager = manager;
 		this.name = name;
 		this.arrSpacePointingTo = pointTo;
 		this.readOnly = readOnly;
+		this.pointerListIdx = pointerListIdx;
 		
 		this.spaceSetup();
 		this.pointerSetup();
@@ -52,6 +55,15 @@ public class PointerSpace extends Space implements MouseListener {
 		}
 		this.arrSpacePointingTo = pointTo;
 		this.updateDispValue();
+		gameManager.updatePtrState(pointerListIdx, pointTo);
+	}
+	
+	public int getPtrListIdx() {
+		return pointerListIdx;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	@Override
